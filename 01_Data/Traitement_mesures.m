@@ -90,4 +90,9 @@ fprintf('  - sensor: paramètres du capteur\n');
 fprintf('  - errors: parametres d''erreur\n');
 fprintf('  - measurements: toutes les mesures organisées\n');
 fprintf('  - targets: mesures organisées par cible\n');
+val = targets(1).time;
+deltaT=[];
+for i = 1:517
+deltaT(i) = val(i+1)-val(i) ;
 
+end
