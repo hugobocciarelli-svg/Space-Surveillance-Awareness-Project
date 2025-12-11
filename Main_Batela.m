@@ -4,9 +4,6 @@ Target_selected = 21529 ; %id de la target
 
 %% 1.Extraction des mesures et conversion en ECI
 meas = Extract_data(Target_selected);
-size(meas.azimuth)
-size(meas.elevation)
-size(meas.distance)
 Z_ECEF=LatLonDist2ECEF(meas.azimuth,meas.elevation,meas.distance); %conversion des données az,elev,dist en ECEF
 Z_eci=ECEFtoECI(Z_ECEF,meas.datetime);
 
