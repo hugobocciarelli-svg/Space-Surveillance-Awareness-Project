@@ -13,7 +13,7 @@ function [Target_data] = Extract_data(n)
     z_true = mesures(:, 5)/1000;
     azimuth = mesures(:, 6);
     elevation = mesures(:, 7);
-    distance = mesures(:, 8);
+    distance = mesures(:, 8)/1000;
     
     % Conversion du temps
     epoch_2000 = datetime(2000, 1, 1, 0, 0, 0);
@@ -59,3 +59,4 @@ function [Target_data] = Extract_data(n)
     fprintf('\n=== CIBLE %d EXTRAITE ===\n', n);
     fprintf('Nombre de mesures: %d\n', Target_data.n_measurements);
 end
+

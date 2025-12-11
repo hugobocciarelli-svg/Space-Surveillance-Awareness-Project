@@ -4,22 +4,15 @@ Target_selected = 22 ; %id de la target
 
 %% 1.Extraction des mesures et conversion en ECI
 meas = Extract_data(Target_selected);
-Z = [meas.x_true'; meas.y_true'; meas.z_true']; %Mise en forme du vecteur de mesure Z
-n_meas = size(Z, 2);            %Nombre de mesures prises en compte
-Z_eci = zeros(3, n_meas);       %Initialisation du vecteur Z_ECI
-for k = 1:n_meas                %Conversion de chaque données du vecteur de ECEF evrs ECI
-    r_ecef_k = Z(:, k); 
-    utc_datetime_k = meas.datetime(k); 
-    [r_eci_k, ~] = ecef2eci(utc_datetime_k, r_ecef_k); 
-    Z_eci(:, k) = r_eci_k;
-end
+Z_ECEF=LatLonDist2ECEF(meas.azimuth,meas.elevation,meas.distance); %conversion des données az,elev,dist en ECEF
+Z_eci=ECEFtoECI(Z_ECEF,meas.datetime);
 
 idx_meas=1 ; %index de la mesure actuelle
-
+Z = [meas.x_true'; meas.y_true'; meas.z_true']; %vecteur des données réelles
 %% 2. PARAMÈTRES DE SIMULATION
 t0 = meas.time(1);                  % Temps initial [s]
 dt = 1.6;                           % Pas de temps [s](Synchro sur le dt mesure pour des questions de simplicités)
-t_sim = 20;                      % Temps de simulation [s] 
+t_sim = 3600*6;                      % Temps de simulation [s] 
 t_end = t0 + t_sim;                 % Temps  final [s] 
 TimeT = t0:dt:t_end;                % Vecteur temps
 n_steps = length(TimeT);            % Nombre de pas
@@ -28,7 +21,7 @@ n_steps = length(TimeT);            % Nombre de pas
 % État initial: [x, y, z, vx, vy, vz] en km et km/s
 X0_real = [7078; 0; 0; 0; 7.5; 0];                  % Supposons que nous connaissons l'etat initial
 X0_est = X0_real + [10; 5; -5; 0.1; -0.1; 0.05];    % Estimation initiale (avec erreur)
-
+n_meas = size(Z, 2);%Nombre de mesures prises en compte   
 %% 4. PARAMÈTRES DU FILTRE DE KALMAN
 % Matrice de mesure 
 H = [1 0 0 0 0 0;
@@ -103,4 +96,4 @@ delta = predicted_states-Corrected_states;
 
 
 %% 7. Affichage
-Plots(TimeT,predicted_states,Corrected_states)
+PlotTrajectoryComparison(TimeT, Corrected_states, Z, meas.time, meas.datetime);
