@@ -60,10 +60,10 @@ for i = 1:n_steps-1
     predicted_states(:, i+1) = x_pred;
 
     % Matrice de transition d'état (Jacobienne)
-    F=Jacobian(x_pred);
-    F_dsc= eye(6) + F * dt; %Matrice de transition discrete pour P
+    F=MatriceTransition(x_pred,dt);
+
     %Propagation de la covariance
-    P_pred = F_dsc * P_history{i} * F_dsc' + W;
+    P_pred = F * P_history{i} * F' + W;
     
     % Cherche si une mesure existe proche du temps actuel (tolérance de dt/2)
     measure_dispo = false;
@@ -100,3 +100,4 @@ PlotTrajectoryComparison(TimeT, Corrected_states, Pos,Z_eci, meas.time, meas.dat
 
 VisualizeOrbitAerospace(Corrected_states,TimeT,meas,t_sim)
 
+disp(jacobian(modele_dynamique,))
